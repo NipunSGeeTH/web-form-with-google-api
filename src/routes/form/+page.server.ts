@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+const { verify } = jwt;
 import { google } from 'googleapis';
 import { env } from '$env/dynamic/private';
 import { redirect } from '@sveltejs/kit';
@@ -13,7 +14,7 @@ export const actions = {
 
     let decoded: { username: string };
     try {
-      decoded = jwt.verify(token, env.JWT_SECRET) as { username: string };
+      decoded = verify(token, env.JWT_SECRET) as { username: string };
     } catch {
       throw redirect(303, '/');
     }

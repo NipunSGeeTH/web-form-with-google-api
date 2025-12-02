@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs';
-import { google } from 'googleapis';
 import { env } from '$env/dynamic/private';
 import jwt from 'jsonwebtoken';
 import { redirect } from '@sveltejs/kit';
@@ -12,6 +11,8 @@ const users: Record<string, string> = {
   user3: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
   user4: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
 };
+
+const { sign } = jwt;
 
 export const actions = {
   default: async ({ request, cookies }: { request: Request; cookies: Cookies }) => {
@@ -33,34 +34,8 @@ export const actions = {
     }
 
     // Generate JWT
-    const token = jwt.sign({ username }, env.JWT_SECRET, { expiresIn: '1h' });
+    const token = sign({ username }, env.JWT_SECRET, { expiresIn: '1h' });
     cookies.set('session', token, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 3600, path: '/' });
-
-    // Store login in Google Sheet
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        type: 'service_account',
-        private_key: env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-        client_email: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      },
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-
-    const sheets = google.sheets({ version: 'v4', auth });
-
-    try {
-      await sheets.spreadsheets.values.append({
-        spreadsheetId: env.GOOGLE_SHEET_ID,
-        range: 'Sheet1!A:B',
-        valueInputOption: 'RAW',
-        requestBody: {
-          values: [[username, new Date().toISOString()]],
-        },
-      });
-    } catch (error) {
-      console.error('Failed to store login:', error);
-      // Continue to redirect even if sheet fails
-    }
 
     throw redirect(303, '/form');
   },
