@@ -7,7 +7,7 @@ import type { Cookies } from '@sveltejs/kit';
 // Hardcoded users with bcrypt hashed passwords
 const users: Record<string, string> = {
   user1: '$2y$12$IpDZfWZnlK0tFBVSLXa8He5fQQ/mm8r3XanVhSyoIhYp0boTYCa/G', // hash for 'password'
-  user2: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // same for demo
+  user2: '$2y$12$IpDZfWZnlK0tFBVSLXa8He5fQQ/mm8r3XanVhSyoIhYp0boTYCa/G', // same for demo
   user3: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
   user4: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
 };

@@ -5,6 +5,19 @@ import { env } from '$env/dynamic/private';
 import { redirect } from '@sveltejs/kit';
 import type { Cookies } from '@sveltejs/kit';
 
+export const load = async ({ cookies }: { cookies: Cookies }) => {
+  const token = cookies.get('session');
+  if (!token) {
+    throw redirect(303, '/');
+  }
+
+  try {
+    verify(token, env.JWT_SECRET);
+  } catch {
+    throw redirect(303, '/');
+  }
+};
+
 export const actions = {
   default: async ({ request, cookies }: { request: Request; cookies: Cookies }) => {
     const token = cookies.get('session');
@@ -20,14 +33,14 @@ export const actions = {
     }
 
     const data = await request.formData();
-    const name = data.get('name')?.toString();
     const email = data.get('email')?.toString();
     const phone = data.get('phone')?.toString();
     const address = data.get('address')?.toString();
     const country = data.get('country')?.toString();
+    const gender = data.get('gender')?.toString();
     const agree = data.get('agree') ? 'Yes' : 'No';
 
-    if (!name || !email || !phone || !address || !country) {
+    if (!email || !phone || !address || !country || !gender) {
       return { error: 'All fields are required' };
     }
 
@@ -46,10 +59,10 @@ export const actions = {
     try {
       await sheets.spreadsheets.values.append({
         spreadsheetId: env.GOOGLE_SHEET_ID,
-        range: 'Sheet1!A:I',
+        range: 'Sheet1!A:H',
         valueInputOption: 'RAW',
         requestBody: {
-          values: [[decoded.username, name, email, phone, address, country, agree, new Date().toISOString()]],
+          values: [[decoded.username, email, phone, address, country, gender, agree, new Date().toISOString()]],
         },
       });
       return { success: 'Data submitted successfully' };

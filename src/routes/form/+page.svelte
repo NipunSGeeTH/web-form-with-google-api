@@ -2,11 +2,11 @@
   import { page } from '$app/stores';
   import { enhance } from '$app/forms';
 
-  let name = '';
   let email = '';
   let phone = '';
   let address = '';
   let country = '';
+  let gender = '';
   let agree = false;
 </script>
 
@@ -15,12 +15,6 @@
     <h1 class="text-2xl font-bold mb-6 text-center">Submit Your Information</h1>
 
     <form method="POST" use:enhance class="space-y-4">
-      <div>
-        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name:</label>
-        <input id="name" type="text" name="name" bind:value={name} required
-               class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-      </div>
-
       <div>
         <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email:</label>
         <input id="email" type="email" name="email" bind:value={email} required
@@ -49,6 +43,16 @@
           <option value="UK">UK</option>
           <option value="Australia">Australia</option>
           <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="gender" class="block text-sm font-medium text-gray-700 mb-1">Gender:</label>
+        <select id="gender" name="gender" bind:value={gender} required
+                class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <option value="">Select Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
         </select>
       </div>
 
