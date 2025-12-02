@@ -1,6 +1,9 @@
 import bcrypt from 'bcryptjs';
 import { google } from 'googleapis';
 import { env } from '$env/dynamic/private';
+import jwt from 'jsonwebtoken';
+import { redirect } from '@sveltejs/kit';
+import type { Cookies } from '@sveltejs/kit';
 
 // Hardcoded users with bcrypt hashed passwords
 const users: Record<string, string> = {
@@ -11,7 +14,7 @@ const users: Record<string, string> = {
 };
 
 export const actions = {
-  default: async ({ request }) => {
+  default: async ({ request, cookies }: { request: Request; cookies: Cookies }) => {
     const data = await request.formData();
     const username = data.get('username')?.toString();
     const password = data.get('password')?.toString();
@@ -29,7 +32,11 @@ export const actions = {
       return { error: 'Invalid password' };
     }
 
-    // Authenticate Google Sheets
+    // Generate JWT
+    const token = jwt.sign({ username }, env.JWT_SECRET, { expiresIn: '1h' });
+    cookies.set('session', token, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 3600, path: '/' });
+
+    // Store login in Google Sheet
     const auth = new google.auth.GoogleAuth({
       credentials: {
         type: 'service_account',
@@ -50,10 +57,11 @@ export const actions = {
           values: [[username, new Date().toISOString()]],
         },
       });
-      return { success: 'Login successful and stored in Google Sheet' };
     } catch (error) {
-      console.error(error);
-      return { error: 'Failed to store in Google Sheet' };
+      console.error('Failed to store login:', error);
+      // Continue to redirect even if sheet fails
     }
+
+    throw redirect(303, '/form');
   },
 };
