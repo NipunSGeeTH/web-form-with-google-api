@@ -24,8 +24,10 @@ export const actions = {
     const email = data.get('email')?.toString();
     const phone = data.get('phone')?.toString();
     const address = data.get('address')?.toString();
+    const country = data.get('country')?.toString();
+    const agree = data.get('agree') ? 'Yes' : 'No';
 
-    if (!name || !email || !phone || !address) {
+    if (!name || !email || !phone || !address || !country) {
       return { error: 'All fields are required' };
     }
 
@@ -44,10 +46,10 @@ export const actions = {
     try {
       await sheets.spreadsheets.values.append({
         spreadsheetId: env.GOOGLE_SHEET_ID,
-        range: 'Sheet1!A:F',
+        range: 'Sheet1!A:I',
         valueInputOption: 'RAW',
         requestBody: {
-          values: [[decoded.username, name, email, phone, address, new Date().toISOString()]],
+          values: [[decoded.username, name, email, phone, address, country, agree, new Date().toISOString()]],
         },
       });
       return { success: 'Data submitted successfully' };

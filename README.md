@@ -39,9 +39,10 @@ npm run dev
 
 ## Google Sheet Structure
 - Column A: Username
-- Column B: Login Timestamp
-- Column C: Name
-- Column D: Email
-- Column E: Phone
-- Column F: Address
-- Column G: Submission Timestamp
+- Column B: Name
+- Column C: Email
+- Column D: Phone
+- Column E: Address
+- Column F: Country
+- Column G: Agree to Terms
+- Column H: Submission Timestamp
