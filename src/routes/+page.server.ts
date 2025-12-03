@@ -4,12 +4,12 @@ import jwt from 'jsonwebtoken';
 import { redirect } from '@sveltejs/kit';
 import type { Cookies } from '@sveltejs/kit';
 
-// Hardcoded users with bcrypt hashed passwords
+// Users loaded from environment variables
 const users: Record<string, string> = {
-  user1: '$2y$12$IpDZfWZnlK0tFBVSLXa8He5fQQ/mm8r3XanVhSyoIhYp0boTYCa/G', // hash for 'password'
-  user2: '$2y$12$IpDZfWZnlK0tFBVSLXa8He5fQQ/mm8r3XanVhSyoIhYp0boTYCa/G', // same for demo
-  user3: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-  user4: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+  [env.USER1_USERNAME || 'user1']: env.USER1_PASSWORD || '',
+  [env.USER2_USERNAME || 'user2']: env.USER2_PASSWORD || '',
+  [env.USER3_USERNAME || 'user3']: env.USER3_PASSWORD || '',
+  [env.USER4_USERNAME || 'user4']: env.USER4_PASSWORD || '',
 };
 
 const { sign } = jwt;

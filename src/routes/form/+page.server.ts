@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
-const { verify } = jwt;
 import { google } from 'googleapis';
 import { env } from '$env/dynamic/private';
 import { redirect } from '@sveltejs/kit';
 import type { Cookies } from '@sveltejs/kit';
+
+const { verify } = jwt;
 
 export const load = async ({ cookies }: { cookies: Cookies }) => {
   const token = cookies.get('session');
