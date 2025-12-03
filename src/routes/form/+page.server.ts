@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { google } from 'googleapis';
-import { env } from '$env/dynamic/private';
+import { GOOGLE_SHEET_ID, GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY, JWT_SECRET } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
 import type { Cookies } from '@sveltejs/kit';
 
@@ -13,7 +13,7 @@ export const load = async ({ cookies }: { cookies: Cookies }) => {
   }
 
   try {
-    verify(token, env.JWT_SECRET);
+    verify(token, JWT_SECRET);
   } catch {
     throw redirect(303, '/');
   }
@@ -28,7 +28,7 @@ export const actions = {
 
     let decoded: { username: string };
     try {
-      decoded = verify(token, env.JWT_SECRET) as { username: string };
+      decoded = verify(token, JWT_SECRET) as { username: string };
     } catch {
       throw redirect(303, '/');
     }
@@ -46,11 +46,15 @@ export const actions = {
     }
 
     // Authenticate Google Sheets
+    const privateKey = GOOGLE_PRIVATE_KEY.includes('\\n') 
+      ? GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n') 
+      : GOOGLE_PRIVATE_KEY;
+    
     const auth = new google.auth.GoogleAuth({
       credentials: {
         type: 'service_account',
-        private_key: env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-        client_email: env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+        private_key: privateKey,
+        client_email: GOOGLE_SERVICE_ACCOUNT_EMAIL,
       },
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
@@ -59,7 +63,7 @@ export const actions = {
 
     try {
       await sheets.spreadsheets.values.append({
-        spreadsheetId: env.GOOGLE_SHEET_ID,
+        spreadsheetId: GOOGLE_SHEET_ID,
         range: 'Sheet1!A:H',
         valueInputOption: 'RAW',
         requestBody: {

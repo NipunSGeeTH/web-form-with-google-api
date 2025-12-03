@@ -1,15 +1,15 @@
 import bcrypt from 'bcryptjs';
-import { env } from '$env/dynamic/private';
+import { JWT_SECRET, USER1_USERNAME, USER1_PASSWORD, USER2_USERNAME, USER2_PASSWORD, USER3_USERNAME, USER3_PASSWORD, USER4_USERNAME, USER4_PASSWORD } from '$env/static/private';
 import jwt from 'jsonwebtoken';
 import { redirect } from '@sveltejs/kit';
 import type { Cookies } from '@sveltejs/kit';
 
 // Users loaded from environment variables
 const users: Record<string, string> = {
-  [env.USER1_USERNAME || 'user1']: env.USER1_PASSWORD || '',
-  [env.USER2_USERNAME || 'user2']: env.USER2_PASSWORD || '',
-  [env.USER3_USERNAME || 'user3']: env.USER3_PASSWORD || '',
-  [env.USER4_USERNAME || 'user4']: env.USER4_PASSWORD || '',
+  [USER1_USERNAME || 'user1']: USER1_PASSWORD || '',
+  [USER2_USERNAME || 'user2']: USER2_PASSWORD || '',
+  [USER3_USERNAME || 'user3']: USER3_PASSWORD || '',
+  [USER4_USERNAME || 'user4']: USER4_PASSWORD || '',
 };
 
 const { sign } = jwt;
@@ -34,7 +34,7 @@ export const actions = {
     }
 
     // Generate JWT
-    const token = sign({ username }, env.JWT_SECRET, { expiresIn: '1h' });
+    const token = sign({ username }, JWT_SECRET, { expiresIn: '1h' });
     cookies.set('session', token, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 3600, path: '/' });
 
     throw redirect(303, '/form');

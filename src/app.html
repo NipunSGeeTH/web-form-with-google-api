@@ -7,5 +7,11 @@
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
+		<script>
+			// Define chrome if not defined to prevent ReferenceError
+			if (typeof window !== 'undefined' && typeof window.chrome === 'undefined') {
+				window.chrome = {};
+			}
+		</script>
 	</body>
 </html>
